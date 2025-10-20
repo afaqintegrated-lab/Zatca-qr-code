@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZATCA QR Code Decoder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #0f7a6e 0%, #2d9e83 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .upload-section {
+            background: #f8f9fa;
+            border: 3px dashed #dee2e6;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+        .upload-section:hover {
+            border-color: #11998e;
+            background: #e8f5f3;
+        }
+        .upload-section.dragover {
+            border-color: #11998e;
+            background: #d4f1eb;
+            transform: scale(1.02);
+        }
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: none;
+        }
+        .upload-btn {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-block;
+            margin: 10px;
+        }
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+        }
+        .textarea-section {
+            margin-top: 20px;
+        }
+        .textarea-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .textarea-section textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            resize: vertical;
+            min-height: 100px;
+        }
+        .textarea-section textarea:focus {
+            outline: none;
+            border-color: #11998e;
+            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        }
+        .decode-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .decode-btn:hover {
+            transform: translateY(-2px);
+        }
+        .result-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .success-box {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .success-box h3 {
+            color: #155724;
+            margin-bottom: 10px;
+        }
+        .error-box {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 5px solid #dc3545;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .error-box h3 {
+            color: #721c24;
+            margin-bottom: 10px;
+        }
+        .data-grid {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .data-item {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        .data-item:hover {
+            border-color: #11998e;
+            box-shadow: 0 4px 12px rgba(17, 153, 142, 0.1);
+            transform: translateY(-2px);
+        }
+        .data-label {
+            font-size: 12px;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .data-value {
+            font-size: 18px;
+            color: #212529;
+            font-weight: 600;
+            word-break: break-word;
+        }
+        .data-value.arabic {
+            font-size: 20px;
+            direction: rtl;
+            text-align: right;
+        }
+        .raw-data {
+            background: #263238;
+            color: #aed581;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            word-break: break-all;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .tag-breakdown {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .tag-breakdown h4 {
+            margin-bottom: 15px;
+            color: #495057;
+        }
+        .tag-item {
+            padding: 10px;
+            background: white;
+            border-left: 4px solid #11998e;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .tag-item strong {
+            color: #11998e;
+        }
+        .info-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: #6c757d;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        .tab.active {
+            color: #11998e;
+            border-bottom-color: #11998e;
+        }
+        .tab:hover {
+            color: #11998e;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        #preview {
+            max-width: 300px;
+            margin: 20px auto;
+            display: none;
+            border: 3px solid #11998e;
+            border-radius: 8px;
+            padding: 10px;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔓 ZATCA QR Code Decoder</h1>
+            <p>Decode and Verify Saudi Arabia E-Invoice QR Codes</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <strong>📋 How to use:</strong> Upload a QR code image, paste the Base64 string, or scan a QR code to decode the ZATCA invoice information.
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('upload')">📤 Upload Image</button>
+                <button class="tab" onclick="switchTab('paste')">📋 Paste Base64</button>
+            </div>
+
+            <div id="uploadTab" class="tab-content active">
+                <div class="upload-section" id="dropZone">
+                    <div class="upload-icon">📸</div>
+                    <h3>Upload QR Code Image</h3>
+                    <p style="margin: 15px 0; color: #6c757d;">Drag and drop a QR code image here, or click to select</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*">
+                    <label for="fileInput" class="upload-btn">Choose File</label>
+                    <p style="margin-top: 10px; font-size: 13px; color: #999;">Supports: JPG, PNG, GIF</p>
+                </div>
+                <img id="preview" alt="QR Code Preview">
+            </div>
+
+            <div id="pasteTab" class="tab-content">
+                <div class="textarea-section">
+                    <label for="base64Input">📋 Paste Base64 Encoded String:</label>
+                    <textarea id="base64Input" placeholder="Paste your Base64 encoded ZATCA QR code data here..."></textarea>
+                    <button class="decode-btn" onclick="decodeFromBase64()">🔓 Decode Base64</button>
+                </div>
+            </div>
+
+            <div id="resultSection" class="result-section">
+                <!-- Results will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Include jsQR library for QR code scanning -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+
+    <script>
+        let currentTab = 'upload';
+
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            if (tab === 'upload') {
+                document.querySelector('.tab:nth-child(1)').classList.add('active');
+                document.getElementById('uploadTab').classList.add('active');
+            } else {
+                document.querySelector('.tab:nth-child(2)').classList.add('active');
+                document.getElementById('pasteTab').classList.add('active');
+            }
+        }
+
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const preview = document.getElementById('preview');
+
+        fileInput.addEventListener('change', handleFileSelect);
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.type.startsWith('image/')) {
+                showError('Please select an image file');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+                decodeQRFromImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function decodeQRFromImage(imageSrc) {
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0);
+
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const code = jsQR(imageData.data, imageData.width, imageData.height);
+
+                if (code) {
+                    console.log('QR Code detected:', code.data);
+                    decodeZATCAData(code.data);
+                } else {
+                    showError('No QR code found in the image. Please try a different image.');
+                }
+            };
+            img.src = imageSrc;
+        }
+
+        function decodeFromBase64() {
+            const base64Input = document.getElementById('base64Input').value.trim();
+            if (!base64Input) {
+                showError('Please paste a Base64 encoded string');
+                return;
+            }
+            decodeZATCAData(base64Input);
+        }
+
+        function decodeZATCAData(base64Data) {
+            try {
+                console.log('Decoding Base64:', base64Data);
+
+                // Decode Base64
+                const binaryString = atob(base64Data);
+                console.log('Binary string length:', binaryString.length);
+
+                // Parse TLV format
+                const tags = parseTLV(binaryString);
+                console.log('Parsed tags:', tags);
+
+                if (tags.length === 0) {
+                    showError('Invalid ZATCA QR code format');
+                    return;
+                }
+
+                displayResults(tags, base64Data, binaryString);
+
+            } catch (error) {
+                console.error('Decoding error:', error);
+                showError('Failed to decode QR code: ' + error.message);
+            }
+        }
+
+        function parseTLV(binaryString) {
+            const tags = [];
+            let offset = 0;
+
+            while (offset < binaryString.length) {
+                if (offset + 2 > binaryString.length) break;
+
+                const tag = binaryString.charCodeAt(offset);
+                const length = binaryString.charCodeAt(offset + 1);
+
+                if (offset + 2 + length > binaryString.length) break;
+
+                const value = binaryString.substr(offset + 2, length);
+
+                tags.push({
+                    tag: tag,
+                    length: length,
+                    value: value,
+                    name: getTagName(tag)
+                });
+
+                offset += 2 + length;
+            }
+
+            return tags;
+        }
+
+        function getTagName(tag) {
+            const tagNames = {
+                1: 'Seller Name',
+                2: 'VAT Registration Number',
+                3: 'Invoice Timestamp',
+                4: 'Invoice Total (with VAT)',
+                5: 'VAT Total'
+            };
+            return tagNames[tag] || 'Unknown Tag';
+        }
+
+        function displayResults(tags, base64Data, binaryString) {
+            const resultSection = document.getElementById('resultSection');
+
+            let html = `
+                <div class="success-box">
+                    <h3>✅ QR Code Decoded Successfully!</h3>
+                    <p>ZATCA-compliant invoice data has been extracted.</p>
+                </div>
+
+                <h3 style="margin-bottom: 20px; color: #333;">📊 Invoice Information</h3>
+                <div class="data-grid">
+            `;
+
+            tags.forEach(tag => {
+                const isArabic = /[\u0600-\u06FF]/.test(tag.value);
+                html += `
+                    <div class="data-item">
+                        <div class="data-label">${tag.name} (Tag ${tag.tag})</div>
+                        <div class="data-value ${isArabic ? 'arabic' : ''}">${escapeHtml(tag.value)}</div>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+
+                <div class="tag-breakdown">
+                    <h4>🔍 TLV Breakdown</h4>
+            `;
+
+            tags.forEach(tag => {
+                html += `
+                    <div class="tag-item">
+                        <strong>Tag ${tag.tag}</strong> (${tag.name})<br>
+                        Length: ${tag.length} bytes<br>
+                        Value: ${escapeHtml(tag.value)}
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+
+                <h4 style="margin-top: 30px; color: #333;">🔢 Raw Data</h4>
+                <div class="raw-data">
+                    <strong>Base64 Encoded:</strong><br>
+                    ${base64Data}<br><br>
+                    <strong>Binary Length:</strong> ${binaryString.length} bytes<br>
+                    <strong>Tags Found:</strong> ${tags.length}
+                </div>
+            `;
+
+            resultSection.innerHTML = html;
+            resultSection.classList.add('show');
+            resultSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.innerHTML = `
+                <div class="error-box">
+                    <h3>❌ Error</h3>
+                    <p>${escapeHtml(message)}</p>
+                </div>
+            `;
+            resultSection.classList.add('show');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+    </script>
+</body>
+</html>

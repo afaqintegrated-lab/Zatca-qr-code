@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZATCA QR Code Local Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .qr-result {
+            margin-top: 30px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+        }
+        .qr-result.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .qr-result h3 {
+            color: #28a745;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        #qrCodeImage {
+            max-width: 100%;
+            height: auto;
+            border: 3px solid #333;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .info-box h4 {
+            color: #1976D2;
+            margin-bottom: 10px;
+        }
+        .data-display {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 24px;
+            }
+            .content {
+                padding: 20px;
+            }
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 ZATCA QR Code Generator</h1>
+            <p>Local Test Tool - Saudi Arabia E-Invoice Compliance</p>
+        </div>
+
+        <div class="content">
+            <div class="info-box">
+                <h4>📋 About ZATCA QR Codes</h4>
+                <p>This tool generates ZATCA-compliant QR codes using TLV (Tag-Length-Value) encoding format as required by Saudi Arabian tax authority (ZATCA) for e-invoicing Phase 1.</p>
+            </div>
+
+            <form id="qrForm">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="sellerName">Seller Name (اسم البائع)</label>
+                        <input type="text" id="sellerName" value="مؤسسة آفاق المتكاملة لتقنية المعلومات" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vatNumber">VAT Number (رقم التسجيل الضريبي)</label>
+                        <input type="text" id="vatNumber" value="311859643900003" required>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="invoiceTotal">Invoice Total (المبلغ الإجمالي) SAR</label>
+                        <input type="number" id="invoiceTotal" value="115.00" step="0.01" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="vatTotal">VAT Total (مبلغ ضريبة القيمة المضافة) SAR</label>
+                        <input type="number" id="vatTotal" value="15.00" step="0.01" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="invoiceDate">Invoice Date & Time (تاريخ الفاتورة)</label>
+                    <input type="datetime-local" id="invoiceDate" required>
+                </div>
+
+                <button type="submit" class="btn">🎨 Generate ZATCA QR Code</button>
+            </form>
+
+            <div id="qrResult" class="qr-result">
+                <h3>✅ QR Code Generated Successfully!</h3>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="qrSize">-</div>
+                        <div class="stat-label">QR Code Size</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="dataLength">-</div>
+                        <div class="stat-label">Data Length</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">L</div>
+                        <div class="stat-label">Error Correction</div>
+                    </div>
+                </div>
+
+                <img id="qrCodeImage" alt="ZATCA QR Code">
+
+                <div class="info-box" style="margin-top: 20px;">
+                    <h4>📱 How to Test</h4>
+                    <p>Scan this QR code with any QR reader app or ZATCA-compliant e-invoice validation app to verify the encoded data.</p>
+                </div>
+
+                <div class="data-display" id="encodedData"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set current date/time on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            // Format for datetime-local input
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+
+            document.getElementById('invoiceDate').value = `${year}-${month}-${day}T${hours}:${minutes}`;
+        });
+
+        // Handle form submission
+        document.getElementById('qrForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            generateZATCAQR();
+        });
+
+        function generateZATCAQR() {
+            try {
+                console.log('Starting QR generation...');
+
+                // Get form values
+                const sellerName = document.getElementById('sellerName').value;
+                const vatNumber = document.getElementById('vatNumber').value;
+                const invoiceTotal = parseFloat(document.getElementById('invoiceTotal').value);
+                const vatTotal = parseFloat(document.getElementById('vatTotal').value);
+                const invoiceDate = document.getElementById('invoiceDate').value;
+
+                console.log('Form values:', {sellerName, vatNumber, invoiceTotal, vatTotal, invoiceDate});
+
+                // Convert to ISO 8601 UTC format
+                const invoiceDateUTC = new Date(invoiceDate).toISOString();
+
+                // Generate TLV (Tag-Length-Value) encoded string
+                const tlvData = generateTLV([
+                    { tag: 1, value: sellerName },
+                    { tag: 2, value: vatNumber },
+                    { tag: 3, value: invoiceDateUTC },
+                    { tag: 4, value: invoiceTotal.toFixed(2) },
+                    { tag: 5, value: vatTotal.toFixed(2) }
+                ]);
+
+                // Convert to Base64
+                const base64Data = btoa(unescape(encodeURIComponent(tlvData)));
+
+                console.log('Base64 data:', base64Data);
+
+                // Display encoded data
+                document.getElementById('encodedData').innerHTML = `
+                    <strong>Base64 Encoded TLV Data:</strong><br>
+                    ${base64Data}
+                `;
+
+                // Update stats
+                document.getElementById('qrSize').textContent = '300x300';
+                document.getElementById('dataLength').textContent = base64Data.length + ' chars';
+
+                // Generate QR code using Google Charts API
+                const qrImage = document.getElementById('qrCodeImage');
+                const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(base64Data)}`;
+
+                qrImage.src = qrApiUrl;
+                qrImage.style.display = 'block';
+
+                console.log('QR API URL:', qrApiUrl);
+
+                // Show result section
+                document.getElementById('qrResult').classList.add('show');
+
+                // Smooth scroll to result
+                setTimeout(() => {
+                    document.getElementById('qrResult').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+
+                console.log('QR generation complete!');
+
+            } catch (error) {
+                console.error('Error generating QR code:', error);
+                alert('Error generating QR code: ' + error.message);
+            }
+        }
+
+        // Generate TLV encoded string
+        function generateTLV(fields) {
+            let tlvString = '';
+
+            fields.forEach(field => {
+                // Tag (1 byte)
+                tlvString += String.fromCharCode(field.tag);
+
+                // Length (1 byte)
+                const valueBytes = unescape(encodeURIComponent(field.value)); // UTF-8 encoding
+                tlvString += String.fromCharCode(valueBytes.length);
+
+                // Value
+                tlvString += field.value;
+            });
+
+            return tlvString;
+        }
+
+        // Helper function to convert string to UTF-8 bytes
+        function stringToUTF8Bytes(str) {
+            const utf8 = unescape(encodeURIComponent(str));
+            const bytes = [];
+            for (let i = 0; i < utf8.length; i++) {
+                bytes.push(utf8.charCodeAt(i));
+            }
+            return bytes;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+/* modules/zatca_qr_code/assets/css/style.css */
+
+/* General styling for the module's admin settings page */
+.zatca-qr-code-settings-panel {
+    padding: 15px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.zatca-qr-code-settings-panel h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+/* Style for input fields related to QR code settings */
+.zatca-qr-code-settings-panel .form-group label {
+    font-weight: 500;
+}
+
+/* Optional: Styles for a live QR code preview area if you implement it */
+#qr_preview_area {
+    margin-top: 20px;
+    border: 1px dashed #ccc;
+    padding: 15px;
+    text-align: center;
+    background-color: #fcfcfc;
+    min-height: 100px; /* Ensure it has some height even if no QR */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+#qr_preview_area img {
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #eee;
+    padding: 5px;
+    background-color: #fff;
+}
+
+#qr_preview_area p {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #666;
+}
+
+/* Enhancements for checkboxes/switches in Perfex */
+.checkbox-primary input[type="checkbox"]:checked + label::before {
+    background-color: var(--theme-color) !important; /* Uses Perfex primary color */
+    border-color: var(--theme-color) !important;
+}
+
+/* General button styling (Perfex default is usually fine) */
+.btn-primary {
+    background-color: var(--theme-color) !important;
+    border-color: var(--theme-color) !important;
+}
+.btn-primary:hover {
+    filter: brightness(90%);
+}
