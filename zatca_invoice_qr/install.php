@@ -278,7 +278,11 @@ if (!$CI->db->table_exists(db_prefix() . 'zatca_certificates')) {
 // ====================================================================================
 // Set module options
 // ====================================================================================
-add_option('zatca_invoice_qr_version', ZATCA_INVOICE_QR_VERSION);
-add_option('zatca_invoice_qr_installed', date('Y-m-d H:i:s'));
+if (!get_option('zatca_invoice_qr_version')) {
+    add_option('zatca_invoice_qr_version', '1.0.0');
+}
+if (!get_option('zatca_invoice_qr_installed')) {
+    add_option('zatca_invoice_qr_installed', date('Y-m-d H:i:s'));
+}
 
 log_activity('ZATCA Invoice QR Module: Installation completed successfully');
