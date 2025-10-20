@@ -1,0 +1,271 @@
+/**
+ * ZATCA Invoice QR - Admin Styles
+ */
+
+/* Settings Page */
+.zatca-settings-panel {
+    margin-bottom: 20px;
+}
+
+.zatca-qr-preview {
+    border: 2px dashed #ddd;
+    padding: 20px;
+    text-align: center;
+    background: #f9f9f9;
+    margin: 20px 0;
+}
+
+.zatca-qr-preview img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Statistics Cards */
+.zatca-stat-card {
+    padding: 20px;
+    text-align: center;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+.zatca-stat-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 36px;
+    font-weight: 600;
+}
+
+.zatca-stat-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+/* Configuration Status */
+.zatca-config-status {
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+.zatca-config-status.configured {
+    background: #dff0d8;
+    border: 1px solid #d6e9c6;
+    color: #3c763d;
+}
+
+.zatca-config-status.not-configured {
+    background: #f2dede;
+    border: 1px solid #ebccd1;
+    color: #a94442;
+}
+
+/* Test QR Modal */
+#testQrModal .modal-body {
+    padding: 30px;
+}
+
+#testQrModal .decoded-data {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+#testQrModal .qr-data-raw {
+    font-family: monospace;
+    font-size: 12px;
+    background: #2d2d2d;
+    color: #f8f8f2;
+    padding: 15px;
+    border-radius: 4px;
+    word-break: break-all;
+}
+
+/* Form Elements */
+.zatca-form-group {
+    margin-bottom: 20px;
+}
+
+.zatca-help-text {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.zatca-required {
+    color: #e74c3c;
+}
+
+/* Buttons */
+.btn-zatca-primary {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: #fff;
+}
+
+.btn-zatca-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    color: #fff;
+}
+
+.btn-zatca-success {
+    background-color: #27ae60;
+    border-color: #27ae60;
+    color: #fff;
+}
+
+.btn-zatca-success:hover {
+    background-color: #229954;
+    border-color: #229954;
+    color: #fff;
+}
+
+/* Tables */
+.zatca-table {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.zatca-table th {
+    background: #f5f5f5;
+    font-weight: 600;
+    padding: 10px;
+}
+
+.zatca-table td {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Loading Spinner */
+.zatca-loading {
+    text-align: center;
+    padding: 40px;
+}
+
+.zatca-loading i {
+    font-size: 48px;
+    color: #3498db;
+}
+
+/* QR Code Display on Invoice */
+.zatca-qr-container {
+    margin: 20px 0;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #fff;
+    text-align: center;
+}
+
+.zatca-qr-container h4 {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.zatca-qr-container img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* PDF Overlay Styles */
+.zatca-qr-pdf-overlay {
+    position: absolute;
+    z-index: 999;
+}
+
+.zatca-qr-pdf-overlay.top-right {
+    top: 20px;
+    right: 20px;
+}
+
+.zatca-qr-pdf-overlay.top-left {
+    top: 20px;
+    left: 20px;
+}
+
+.zatca-qr-pdf-overlay.bottom-right {
+    bottom: 20px;
+    right: 20px;
+}
+
+.zatca-qr-pdf-overlay.bottom-left {
+    bottom: 20px;
+    left: 20px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .zatca-stat-card h3 {
+        font-size: 28px;
+    }
+    
+    .zatca-stat-card p {
+        font-size: 12px;
+    }
+}
+
+/* Alerts */
+.zatca-alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.zatca-alert-success {
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+    color: #3c763d;
+}
+
+.zatca-alert-warning {
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+    color: #8a6d3b;
+}
+
+.zatca-alert-danger {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    color: #a94442;
+}
+
+.zatca-alert-info {
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    color: #31708f;
+}
+
+/* Badge */
+.zatca-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 3px;
+}
+
+.zatca-badge-success {
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.zatca-badge-danger {
+    background-color: #e74c3c;
+    color: #fff;
+}
+
+.zatca-badge-warning {
+    background-color: #f39c12;
+    color: #fff;
+}
+
+.zatca-badge-info {
+    background-color: #3498db;
+    color: #fff;
+}

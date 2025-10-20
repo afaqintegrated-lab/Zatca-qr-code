@@ -1,0 +1,44 @@
+# IDE and Editor files
+.vscode/
+.idea/
+*.sublime-*
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+debug.log
+error.log
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Cache directories
+cache/
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+*_backup
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Don't track phpqrcode cache
+libraries/phpqrcode/cache/*.png
+!libraries/phpqrcode/cache/.gitkeep
+
+# Don't track uploaded QR codes
+uploads/
